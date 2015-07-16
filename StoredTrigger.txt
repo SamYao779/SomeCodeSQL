@@ -1,0 +1,98 @@
+﻿--VD về store PROCedure
+--Khi tạo mới ta dùng CREATE,  khi sửa thì ta dùng ALTER
+CREATE PROC spLayDSHangHoa
+	@MaLoai int,
+	@MaNCC nvarchar(50)
+AS
+BEGIN
+	SELECT * FROM HangHoa
+	WHERE MaLoai = @MaLoai AND MaNCC = @MaNCC
+	
+	--@@ROWCOUNT : số dong ảnh hưởng bởi lệnh SQL trước đó
+	--@@IDENTITY : trả về giá trị tự tăng
+	--@@ERROR : trả về mã lỗi
+
+	PRINT N'Tổng số hàng hóa: ' + CONVERT (nvarchar(3), @@ROWCOUNT) --in ra
+END
+EXEC spLayDSHangHoa 1004, 'SS' --Gọi xuất ra
+
+-- 1. store PROC ChiTietHoaDon
+	--hiển thị thông tin các cột bằng cách JOIN các bảng lại
+CREATE PROC spChiTietHoaDon
+	@MaHD int
+AS
+BEGIN
+	SELECT MaHD, CTHD.MaHH, TenHH, MaCT, TenCongTy, CTHD.SoLuong, CTHD.DonGia,
+				CTHD.SoLuong * CTHD.DonGia as ThanhTien
+	FROM ChiTietHD as CTHD JOIN HangHoa as HH on CTHD.MaHH = HH.MaHH
+			JOIN NhaCungCap as NCC on NCC.MaNCC = HH.MaNCC
+			JOIN Loai as LO on LO.MaLoai = HH.MaLoai
+	WHERE MaHD = @MaHD
+END
+EXEC spChiTietHoaDon 10249 --Gọi xuất ra
+
+
+-- 2. store PROC ThemLoai
+	--thêm 1 giá trị mới và lấy giá trị tự tăng thông qua tham số ra (Output)
+CREATE PROC spThemLoai
+	@MaLoai int OUTPUT, -- Tham số ra (xuất từ Database)
+	@TenLoai nvarchar(50),
+	@MoTa nvarchar(max),
+	@Hinh nvarchar(50)
+AS
+BEGIN
+	--Thêm 1 loại vào Database
+	INSERT INTO Loai (TenLoai, MoTa, Hinh)
+		VALUES (@TenLoai, @MoTa, @Hinh)
+	--Lấy giá trị tự tăng (dùng SET hoặc SELECT đều đc)
+	SET @MaLoai = @@IDENTITY
+END
+DECLARE @MaLoai int --Khai báo giá trị và kiểu dữ liệu cho @MaLoai
+EXEC spThemLoai @MaLoai Output, N'Bia', N'Bia Thùng', ''
+PRINT @MaLoai
+
+
+-- 3. store PROC update Loai
+	--Cập nhật 1 giá trị của 1 bảng
+CREATE PROC spSuaLoai
+	@MaLoai int output, --Tham số ra (xuất từ Database)
+	@TenLoai nvarchar(50),
+	@MoTa nvarchar(max),
+	@Hinh nvarchar(50)
+AS
+BEGIN
+	UPDATE Loai SET TenLoai = @TenLoai, MoTa = @MoTa, Hinh = @Hinh
+	WHERE MaLoai = @MaLoai
+END
+EXEC spSuaLoai 1145, N'Rượu', N'Rượu đế', ''
+
+
+-- 4. store PROC xóa loại
+	--Xóa 1 giá trị của 1 bảng 
+CREATE PROC spXoaLoai
+	@MaLoai int
+AS
+BEGIN
+	DELETE Loai WHERE MaLoai = @MaLoai
+END
+EXEC spXoaLoai 1144
+
+
+-- 5. tạo Trigger thành tiền
+	--update cột ThanhTien của bảng HoaDon khi bảng ChiTietHD bị thay đổi
+CREATE TRIGGER tgUpdateThanhTien
+	on ChiTietHD
+	after insert, update
+AS
+BEGIN
+	DECLARE @MaHD int, @ThanhTien float
+	--Lấy MaHD từ bảng inserted (bảng inserted tự có)
+	SELECT @MaHD = MaHD from inserted
+	--Tính tổng tiền trên bảng ChiTietHD
+	SELECT @ThanhTien = SUM(SoLuong * DonGia * (1 - GiamGia))
+		from ChiTietHD WHERE MaHD = @MaHD
+	--Cập nhật thành tiền của bảng hóa đơn
+	UPDATE HoaDon
+		SET ThanhTien = @ThanhTien
+		WHERE MaHD = @MaHD
+END

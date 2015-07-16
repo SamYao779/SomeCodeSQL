@@ -1,0 +1,599 @@
+﻿--Câu 1 : Hiển thịcác cột: CategoryID, CategoryName và Description trong table
+		-- Categories theo chiều giảm dần của CategoryName
+SELECT CategoryID, CategoryName, [Description]
+FROM Categories
+ORDER BY CategoryName
+
+--Câu 2 : Hãy liệt kê tên các thành phố (City) trong bảng Customers với
+		-- thông tin không trùng lặp (sử dụng DISTINCT)
+SELECT DISTINCT City
+FROM Customers
+
+--Câu 3 : Trong table Products, hãy hiển thị 3 cột ProductName, UnitPrice và 
+		-- UnitsInStock đồng thời sắp xếp 2 cột này theo chiều giảm dần.
+SELECT ProductName, UnitPrice, UnitsInStock
+FROM Products
+ORDER BY UnitPrice DESC, UnitsInStock DESC
+
+--Câu 4 : Trong table Orders chỉ hiển thị những record có cột Freight dưới 50.
+SELECT * FROM Orders
+WHERE Freight < 50
+
+--Câu 5 : Hãy hiển thị những nhân viên (employee) thuộc thành phố “London” trong bảng Employees
+SELECT * FROM Employees
+WHERE City = 'London'
+
+--Câu 6 : Hãy hiển thị những nhân viên (employee) có FirstName bắt đầu bằng ký tự 
+		-- “A” trong bảng Employees
+SELECT * FROM Employees
+WHERE FirstName LIKE 'A%'
+
+--Câu 7 : Trong table Employees, hãy liệt kê những nhân viên có năm sinh trong khoảng từ 1950 đến 1960
+SELECT * FROM Employees
+WHERE YEAR(BirthDate) between 1950 AND 1960 
+
+--Câu 8 : Trong table Shippers hãy liệt kê các CompanyName và số Phone với điều
+		-- kiện Phone không hiển thị mã vùng (lấy 7 số cuối).
+SELECT CompanyName, RIGHT(Phone, 8) AS Phone
+FROM Shippers
+
+--Câu 9 : Hãy tìm nhân viên có HomePhone mà 4 số cuối là 4444
+SELECT * FROM  Employees
+WHERE HomePhone LIKE '%4444'
+
+--câu 10 : Hãy tìm những nhân viên ở thành phố ‘Tacoma’ hoặc ‘Seattle’
+SELECT * FROM Employees
+WHERE City = 'Tacoma' OR City = 'Seattle'
+
+--câu 11 : Hãy hiển thị những nhân viên có TitleOfCourtesy là ‘Mr.’ hoặc ‘Ms.’
+SELECT * FROM Employees
+WHERE TitleOfCourtesy = 'Mr.'
+	OR TitleOfCourtesy = 'Ms.'
+	
+--câu 12 : Trong table Suppliers, hãy hiển thị những record có số Fax (không null) và có
+		-- SupplierID từ 5 tới 20
+SELECT * FROM Suppliers
+WHERE Fax IS NOT NULL 
+	AND SupplierID BETWEEN  5 AND 20
+	
+--câu 13 : Hãy hiển thị các Supplier có Country là ‘Germany’ hoặc ‘Australia’ hoặc 'Denmark'
+SELECT * FROM Suppliers
+WHERE Country = 'Germany' 
+	OR Country = 'Australia'
+	OR Country = 'Denmark'
+	
+--câu 14 : Trong table Suppliers, hãy hiển thị các record có SupplierID từ 5 -> 20 và 
+		-- không thuộc Country ‘Germany’
+SELECT * FROM Suppliers
+WHERE SupplierID BETWEEN 5 AND 20
+	AND Country NOT IN ('Germany')
+	
+--câu 15 : Hiển thị thông tin trong table Suppliers trừ những SupplierID từ 10 ->20
+SELECT * FROM Suppliers
+WHERE SupplierID < 10 OR SupplierID > 20
+
+--câu 16 : Dùng table Products để đưa ra những sản phẩm có UnitPrice <20 và UnitsInStock >30
+SELECT * FROM Products
+WHERE UnitPrice < 20 AND UnitsInStock > 30
+
+--câu 17 : Hiển thị tất cả các sản phẩm trong table Products thuộc CategoryID là ‘1’ và 
+		-- trừ sản phẩm có tên là ‘Chang’
+SELECT * FROM Products
+WHERE CategoryID = 1 
+	AND ProductName NOT IN ('Chang')
+	
+--câu 18 : Liệt kê những Product thuộc CategoryName là ‘Seafood’
+SELECT * FROM Products PR JOIN Categories CA 
+		ON PR.CategoryID = CA.CategoryID
+WHERE CategoryName = N'Seafood'
+
+--câu 19 : Hiển thị: ProductID, ProductName, QuantityPerUnit và UnitsInStock của 
+		-- những sản phẩm thuộc loại ‘confections’ và có QuantityPerUnit chứa chuỗi ‘boxes’
+		-- hoặc ‘bags’
+SELECT ProductID, ProductName, QuantityPerUnit, UnitsInStock, CA.CategoryName
+FROM Products P JOIN Categories CA
+		ON P.CategoryID = CA.CategoryID
+WHERE CA.CategoryName = N'Confections' 
+		AND (QuantityPerUnit LIKE N'%boxes%'
+		OR QuantityPerUnit LIKE N'%bag%')
+		
+--câu 20 : Hãy tìm những tên sản phẩm chứa chuỗi ‘Chef’ trong table Products
+SELECT * FROM Products
+WHERE ProductName LIKE N'%chef%'
+	
+--câu 21 : Tìm sản phẩm có tên bắt đầu là ‘Queso’ và kết thúc là chuỗi ‘Pastora’ trong table Products
+SELECT * FROM Products
+WHERE  ProductName LIKE N'Queso%' 
+		AND ProductName LIKE N'%Pastora'
+		
+--câu 22 : Hãy đếm có bao nhiêu Territory thuộc từng Region
+SELECT RegionID, COUNT(TerritoryDescription) AS TerritoryPerRegion
+FROM Territories
+GROUP BY RegionID
+
+--câu 23 : Trong table Customers hãy cho biết có bao nhiêu customers không có số fax
+SELECT COUNT(CustomerID) AS SOLUONG
+FROM Customers
+WHERE Fax IS NULL
+
+--câu 24 : Tìm trong table Customers những CompanyName có chiều dài dưới 10 ký tự
+SELECT COUNT(CustomerID) AS SOLUONG
+FROM Customers
+WHERE LEN(CompanyName) < 10
+
+--câu 25 : Trong table Order Details, hãy thống kê UnitPrice lớn nhất và Quantity lớn nhất
+SELECT MAX(UnitPrice) AS MaxUnitPrice ,MAX (Quantity) AS MaxQuantity
+FROM [Order Details]
+
+--câu 26 : Trong table Order Details, hãy thống kê UnitPrice lớn nhất và Quantity lớn nhất theo từng ProductID
+SELECT ProductID  ,MAX(UnitPrice) AS MaxUnitPrice ,MAX (Quantity) AS MaxQuantity
+FROM [Order Details] 
+GROUP BY ProductID
+ORDER BY ProductID
+
+--Thêm câu 26 : GROUP BY theo ProductName
+SELECT ProductName, MAX(OD.UnitPrice) AS MaxUnitPrice, MAX (Quantity) AS MaxQuantity
+FROM [Order Details] OD JOIN Products PO
+		ON OD.ProductID = PO.ProductID 
+GROUP BY ProductName
+
+--câu 27 : Tính giá trị trung bình của cột UnitPrice trong table Order Details
+SELECT ProductID, MAX(UnitPrice) AS MaxUnitPrice ,MAX (Quantity) AS MaxQuantity, 
+		AVG(UnitPrice) AS TRUNGBINH
+FROM [Order Details]
+GROUP BY ProductID
+
+--câu 28 : Tìm những Quantity cao nhất trong table Order Details trên ProductName
+SELECT ProductName,  MAX (Quantity) AS MaxQuantity
+FROM [Order Details] OD JOIN Products PO
+		ON OD.ProductID = PO.ProductID 
+GROUP BY ProductName
+HAVING MAX(Quantity) >= ALL(
+			SELECT MAX (Quantity) AS MaxQuantity
+			FROM [Order Details] OD JOIN Products PO
+			ON OD.ProductID = PO.ProductID 
+			GROUP BY ProductName)
+			
+--câu 29 : Hiển thị cột CategoryID và UnitsInStock của những UnitsInStock nhỏ nhất trong table Products.
+SELECT CategoryID, MIN(UnitsInStock) AS Min_UnitInStock
+FROM Products
+GROUP BY CategoryID
+HAVING MIN(UnitsInStock) <= ALL (
+			SELECT MIN(UnitsInStock) AS Min_UnitInStock
+			FROM Products
+			GROUP BY CategoryID)
+			
+--câu 30 : Hãy hiển thị những giá trị trung bình của UnitPrice theo CategoryID và chỉ
+		-- hiển thị những giá trị trung bình trong khoảng từ 20 đến 30
+SELECT CategoryID, AVG(UnitPrice) AS AVG_UnitPrice
+FROM Products
+GROUP BY CategoryID
+HAVING AVG(UnitPrice) BETWEEN 20 AND 30
+
+--Câu 31 : Hãy tính giá trịtrung bình trong cột UnitPrice của CategoryName là ‘Seafood’
+SELECT CategoryName, AVG(UnitPrice) AS UnitPrice
+FROM Categories CA JOIN Products PO
+	ON CA.CategoryID = PO.CategoryID
+WHERE CategoryName = 'Seafood'
+GROUP BY CategoryName
+
+
+--Câu 32 : Trong bảng Orders hãy cho biết tổng giá trị cột Freight của những EmployeeID 
+		-- nào có ít hơn 50 OrderID
+SELECT EmployeeID, COUNT(OrderID) AS Count_OrderID, SUM(Freight) AS Sum_Freight
+FROM Orders
+GROUP BY EmployeeID
+HAVING COUNT(OrderID) < 50
+
+--Câu 33 : Hãy cho biết những mã EmployeeID nào có hơn 50 OrderID
+SELECT EmployeeID, COUNT(OrderID)AS Count_OrderID
+FROM Orders
+GROUP BY EmployeeID
+
+--Câu 34 : Tính tổng cột UnitsInStock trong table Products của những CategoryName bắt đầu với ký tự‘C’
+SELECT CategoryName, SUM(UnitsInStock) AS Sum_UnitInStock
+FROM Products PO JOIN Categories CA
+	ON PO.CategoryID = CA.CategoryID
+WHERE CategoryName LIKE N'C%'
+GROUP BY CategoryName
+
+--Câu 35 : Trong table Products hãy tính tổng giá trịcột UnitsInStock và giá trịtrung bình cột 
+		-- UnitPrice của những product có ProductID <10 và chỉhiển thịcác record có tổng 
+		-- UnitsInStock và trung bình UnitPrice lớn hơn 20
+SELECT CategoryID, SUM(UnitsInStock) AS	Sum_Unitstock, 
+			AVG(UnitPrice) AS Avg_UnitPrice
+FROM Products
+WHERE ProductID < 10 
+GROUP BY CategoryID
+HAVING SUM(UnitsInStock) > 20 AND
+		AVG(UnitPrice) > 20
+		
+--Câu 36 : Trong table Employees, hãy cho biết thành phố nào có nhiều (ít) nhân viên nhất 
+		-- và số lượng là bao nhiêu?
+SELECT City, COUNT(EmployeeID) AS Min_EmployeeInCiTy
+FROM Employees
+GROUP BY City
+HAVING COUNT(EmployeeID) <= ALL (
+		SELECT COUNT(EmployeeID) AS Min_EmployeeInCiTy
+		FROM Employees
+		GROUP BY City)
+		
+--Câu 37 : Dùng table Customers và hiển thịcác cột: CustomerID, CompanyName, Phone 
+		-- với điều kiện chỉhiển thị8 ký tựcuối của sốphone, đối với cột Fax thì record nào có giá trị
+		-- NULL thì thay thếbằng từ‘UnAvailable’, những record có chứa mã vùng trong cặp dấu 
+		-- ngoặc () thì phân thành ‘Type 1’, còn lại là ‘Type 2’
+SELECT CustomerID, CompanyName, RIGHT(Phone, 8) AS Phone,
+		CASE 
+			WHEN Fax IS NULL THEN 'UnAvalible'
+			WHEN CHARINDEX('(', Fax) > 0
+				THEN 'Type 1' 
+				ELSE 'Type 2'
+		END
+		AS Type
+FROM Customers
+
+--Câu 38 : Hãy đánh giá UnitPrice của sản phẩm trong table Products theo 3 mức : 
+		-- Dưới 50 là: ‘Cheap Price’ 
+		-- Từ 50 đến 200 là ‘Medium Price’ 
+		-- Trên 200 là ‘Expensive price’ 
+		-- Nếu không có giá thì là ‘Have no price yet’
+SELECT ProductID, ProductName,
+	CASE
+		WHEN UnitPrice IS NULL THEN 'Have No Price'
+		WHEN UnitPrice BETWEEN 50 AND 200 THEN 'Medium Price'
+		WHEN UnitPrice > 200 THEN 'Expensive Price'
+	ELSE
+		'Cheap Price'
+	END
+	AS UnitPrice
+FROM Products
+
+
+------STORE PROCUDER
+
+--Câu 1 : Hãy tạo Stored Procedure để lấy danh sách nhân viên trong bảng Employees
+		-- gồm: EmployeeID, LastName, FirstName, Title, Birthdate, Address, City
+CREATE PROC spListEmployees
+	@Name nvarchar(30)
+AS
+BEGIN
+	SELECT EmployeeID, LastName + '' + FirstName AS FullName,
+			Title, BirthDate, [Address], City
+	FROM Employees
+	WHERE LastName + '' + FirstName LIKE N'%' + @Name + N'%'
+END
+exec spListEmployees N'an'
+
+--Câu 2 : Tạo Stored để tìm nhân viên có FirstName là ‘Nancy’
+CREATE PROC spTimNhanVienTheoTen
+AS
+BEGIN
+	SELECT * FROM Employees
+	WHERE FirstName = N'Nancy'
+END
+EXEC spTimNhanVienTheoTen
+
+--Câu 3 : Tạo Stored để tìm nhân viên theo đối số truyền vào là FirstName, ví dụ: truyền 
+		-- vào nhân viên có FirstName là ‘Andrew’
+CREATE PROC spTimNhanVien
+	@FirstName nvarchar(10)
+AS
+BEGIN
+	SELECT * FROM Employees
+	WHERE FirstName = @FirstName
+END
+EXEC spTimNhanVien N'Andrew'
+
+--câu 4 : Điền tên thành phố, cho biết tổng sô nhân viên
+CREATE PROC spCountNTTheoCity
+	@City nvarchar(15)
+AS
+BEGIN
+	SELECT COUNT(EmployeeID) AS Count_City
+	FROM Employees
+	WHERE City = @City
+END
+EXEC spCountCity 'Seattle'
+
+--Câu 5 : Tạo store hiển thị NV có năm sinh là số lẻ
+CREATE PROC spNVCoNamSinhSoLe
+AS
+BEGIN
+	SELECT * FROM Employees
+	WHERE YEAR(BirthDate) % 2 = 1
+END
+EXEC spNVCoNamSinhSoLe
+
+--Câu 6 : Điền vào tháng sinh của NV, tìm NV có ngày sinh nằm trong tháng đó
+CREATE PROC spDSNVCoThangSInh
+	@Thang int
+AS
+BEGIN
+	SELECT * FROM Employees
+	WHERE MONTH(BirthDate) = @Thang
+END
+EXEC spDSNVCoThangSInh 7
+
+--Câu 6 thêm : Lấy DS nhân viên nhỏ hơn XYZ tuổi
+CREATE PROC DSNVDuoiTuoi
+	@Tuoi INT
+AS
+BEGIN
+	SELECT * FROM Employees
+	WHERE YEAR(GETDATE()) - YEAR(BirthDate) <@Tuoi
+END
+EXEC DSNVDuoiTuoi 100
+
+--Câu 7 : Tạo Stored để điền vào UnitPrice, hiển thị những sản phẩm có UnitPrice nhỏ hơn số điền vào
+CREATE PROC spUnitPriceNhoHon
+	@UnitPrice money
+AS
+BEGIN
+	SELECT * FROM Products
+	WHERE UnitPrice < @UnitPrice
+END
+EXEC spUnitPriceNhoHon 20
+
+--Câu 8 : Điền vào CategoryName, tính tổng UnitPrice theo CategoryName
+CREATE PROC spTongUnitPrice
+	@CategoryName nvarchar(15)
+AS
+BEGIN
+	SELECT SUM(UnitPrice) AS TongUnitPrice
+	FROM Products P JOIN Categories CA
+		ON P.CategoryID = CA.CategoryID
+	WHERE CategoryName = @CategoryName
+END
+EXEC spTongUnitPrice 'Seafood'
+
+--Câu 9 : Tạo Store điền vào 2 số, hiển thị sản phẩm với UnitInStock lớn số thứ nhất và nhỏ số thứ 2
+CREATE PROC spCau9
+	@UnitInStockMin smallint,
+	@UnitInStockMax smallint
+AS
+BEGIN
+	SELECT * FROM Products
+	WHERE UnitsInStock > @UnitInStockMin AND 
+		UnitsInStock < @UnitInStockMax
+END
+EXEC spCau9 10, 20
+--Câu 10 : Viết stored để tìm CategoryName nào có nhiều sản phẩm trong bảng Product nhất
+ALTER PROC spCategoryNameMaxproductCount
+AS
+BEGIN
+	SELECT CategoryName, COUNT(ProductID) AS MaxProducID
+	FROM Products P JOIN Categories CA
+		ON P.CategoryID = CA.CategoryID
+	GROUP BY CategoryName
+	HAVING COUNT(ProductID) >= ALL(
+			SELECT COUNT(ProductID)
+			FROM Products P JOIN Categories CA
+			ON P.CategoryID = CA.CategoryID
+			GROUP BY CategoryName)
+END
+
+--Câu 11 : Viết store đưa ra CategoryName nào có tổng giá trị(UnitsInStock) cao nhất
+ALTER PROC spCategoryNameTongMaxUnitInStock
+AS
+BEGIN
+	SELECT CategoryName, SUM(UnitsInStock) AS TongUinitInStock
+	FROM Products P JOIN Categories CA
+		ON P.CategoryID = CA.CategoryID
+	GROUP BY CategoryName
+	HAVING SUM(UnitsInStock) >= ALL(
+			SELECT SUM(UnitsInStock)
+			FROM Products P JOIN Categories CA
+			ON P.CategoryID = CA.CategoryID
+			GROUP BY CategoryName)
+END
+
+--Câu 12 : Viết Stored để insert một Category mới vào bảng Categories
+ALTER PROC spInsertCategory
+	@CategoryID int output,
+	@CategoryName nvarchar(15),
+	@Description ntext
+AS
+BEGIN
+INSERT INTO Categories (CategoryName, [Description])
+		VALUES(@CategoryName, @Description)
+		SELECT @CategoryID = @@IDENTITY
+END
+
+--Câu 13 : Viết Stored cập nhật lại các cột CategoryName, Description trong table 
+		-- Categories, với điều kiện CategoryID của dữ liệu đó phải tồn tại trong table
+CREATE PROC spUpdateCategories
+	@CategoryID int,
+	@CategoryName nvarchar(15),
+	@Desription ntext
+AS
+BEGIN
+	UPDATE Categories
+	SET CategoryName = @CategoryName, [Description] = @Desription
+	WHERE CategoryID = @CategoryID
+END
+	
+--Câu 14 : Truyền vào store CategoryName, kiểm tra nếu có tồn tại CategoryName đó thì tiến hành xóa record đó
+CREATE PROC spCau14
+	@CategoryName nvarchar(15)
+AS
+BEGIN
+	IF (SELECT COUNT(*)
+		FROM Categories
+		WHERE CategoryName = @CategoryName) > 0
+	BEGIN
+		DELETE FROM Categories
+		WHERE CategoryName = @CategoryName
+	END
+END
+EXEC spCau14 N'Bia'
+
+--Câu 15 : 
+CREATE PROC spCau15
+	@FirstName nvarchar(10)
+AS
+BEGIN
+	SELECT LastName, FirstName, City,
+		CASE
+			WHEN Country = 'USA' THEN 'The United Of America'
+			WHEN Country = 'UK' THEN 'The United Kingdom'
+			ELSE Country
+		END AS Country
+	FROM Employees
+	WHERE FirstName = @FirstName
+END
+
+
+-----------Dùng Database eStore20----------
+--Ví dụ về hàm: tính doanh thu hàng có mã @MaHH trong năm @Nam
+CREATE FUNCTION fn_TinhDoanhThu
+(
+	@MaHH int,
+	@Nam int
+)
+RETURNS FLOAT
+BEGIN 
+	--Khai báo biến giữ doanh thu
+	DECLARE @DoanhThu FLOAT
+	--Tính toán
+	SELECT @DoanhThu = SUM(DonGia * SoLuong * (1-GiamGia))
+	FROM ChiTietHD CTHD JOIN HoaDon HD
+		ON CTHD.MaHD = HD.MaHD
+	WHERE MaHH = @MaHH AND YEAR(NgayDat) = @Nam
+	--Trả về
+	RETURN @DoanhThu
+END
+SELECT MaHH, TenHH,
+		dbo.fn_TinhDoanhThu(MaHH, 1997) AS DoanhThu96
+FROM HangHoa
+
+--Câu 1
+CREATE FUNCTION fn_ThongKeMatHangTheoNCC()
+RETURNS @tmpTable TABLE
+(
+	MaNCC nvarchar(50),
+	SoLuong int
+)
+AS
+BEGIN
+	INSERT @TmpTable
+	SELECT MaNCC, COUNT(MaHH) AS SoLuongMatHang
+	FROM HangHoa
+	GROUP BY MaNCC
+	RETURN
+END
+SELECT * FROM dbo.fn_ThongKeMatHangTheoNCC()
+
+--Câu 2 :
+ALTER FUNCTION fn_DemHDTheoMaKH
+(
+	@MaKH nvarchar(20)
+)
+RETURNS INT
+AS
+BEGIN
+	DECLARE @SoHD INT
+	SELECT @SoHD = COUNT(MaHD)
+	FROM HoaDon 
+	WHERE MaKH = @MaKH
+	RETURN @SoHD
+END
+SELECT dbo.fn_DemHDTheoMaKH('TOMSP') AS SoHDDaMua
+
+--Câu 3
+CREATE FUNCTION fn_LayThongTinHD
+(
+	@MaHD int
+)
+RETURNS Money
+AS
+BEGIN	
+	DECLARE @GiaTri MONEY	
+	SELECT @GiaTri = SUM(SoLuong * DonGia * (1 - GiamGia))
+	FROM ChiTietHD
+	WHERE MaHD = @MaHD
+	GROUP BY MaHD	
+	RETURN @GiaTri
+END
+SELECT dbo.fn_LayThongTinHD (10253) AS GiaTriHoaDon
+FROM ChiTietHD
+
+
+--Câu 4 : 
+CREATE FUNCTION fn_Cau4
+(
+	@Year int,
+	@Month int
+)
+RETURNS INT
+AS
+BEGIN
+	DECLARE @SoLuongHD int
+	SELECT @SoLuongHD = COUNT(MaHD)
+	FROM HoaDon
+	WHERE YEAR(NgayDat) = @Year AND MONTH(NgayDat) = @Month
+	RETURN @SoluongHD
+END
+SELECT dbo.fn_Cau4(1996,08) AS SoLuongHD
+
+--Câu 5 : 
+CREATE FUNCTION fn_ThongKeKhachHang
+(
+	@sex bit,
+	@year int,
+	@month int
+)
+RETURNS @tmpTable TABLE
+(
+	SoLuongKH int
+)
+AS
+BEGIN
+	INSERT @tmpTable
+	SELECT COUNT(K.MaKH)
+	FROM KhachHang K JOIN HoaDon H
+		ON K.MaKH = H.MaKH
+	WHERE GioiTinh = @sex AND YEAR(NgayDat) = @year 
+		AND MONTH(NgayDat) = @month
+	RETURN
+END
+SELECT * From fn_ThongKeKhachHang (1, 2011, 06)
+--Câu 6
+CREATE FUNCTION fn_ThongKeMatHangTheoLoaiHang
+(
+	@MaLoai INT,
+	@MaNCC nvarchar(50)
+)
+RETURNS @tmpTable TABLE
+(
+	MaHH INT,
+	TenHH NVARCHAR(50),
+	DonGia FLOAT
+)
+AS
+BEGIN
+	INSERT @TmpTable
+	SELECT MaHH, TenHH, DonGia
+	FROM HangHoa
+	WHERE MaLoai = @MaLoai AND MaNCC = @MaNCC
+	RETURN
+END
+SELECT * FROM fn_ThongKeMatHangTheoLoaiHang(1001, 'AP')
+
+--Câu 7
+ALTER FUNCTION fn_ThongKeGiaMatHang
+(
+	@MaNCC nvarchar(50)
+)
+RETURNS MONEY
+AS
+BEGIN
+	DECLARE @Gia MONEY
+	SELECT @Gia = (SoLuong * DonGia)
+	FROM HangHoa
+	WHERE MaNCC = @MaNCC
+	RETURN @Gia
+END
+SELECT 
+	dbo.fn_ThongKeGiaMatHang('AP') AS Gia
+FROM HangHoa
+
